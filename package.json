@@ -1,0 +1,48 @@
+{
+  "name": "ts-url-pattern",
+  "version": "0.1.0",
+  "main": "index.js",
+  "author": {
+    "name": "Victor Kotseruba",
+    "email": "barbuzaster@gmail.com",
+    "url": "https://github.com/barbuza"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/barbuza/ts-url-pattern.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "prepublish": "in-publish && npm-run-all clean lint test build || not-in-publish",
+    "test": "jest --coverage",
+    "lint": "tslint -p tsconfig.json",
+    "start": "jest --watch",
+    "clean": "rimraf index.js index.js.map",
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "@types/jest": "^19.2.3",
+    "coveralls": "^2.13.1",
+    "in-publish": "^2.0.0",
+    "jest": "^20.0.4",
+    "npm-run-all": "^4.0.2",
+    "rimraf": "^2.6.1",
+    "ts-jest": "^20.0.4",
+    "tslint": "^5.3.2",
+    "typescript": "^2.3.3"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "mapCoverage": true,
+    "testRegex": "-test\\.ts$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "collectCoverageFrom": [
+      "index.ts"
+    ]
+  }
+}
