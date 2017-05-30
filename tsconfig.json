@@ -4,10 +4,9 @@
     "sourceMap": true,
     "moduleResolution": "node",
     "noImplicitReturns": true,
+    "strict": true,
     "experimentalDecorators": true,
-    "noImplicitAny": true,
     "suppressImplicitAnyIndexErrors": true,
-    "strictNullChecks": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "declaration": true

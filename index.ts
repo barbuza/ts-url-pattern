@@ -11,7 +11,7 @@ export function url<
   a: IMatcher<A>, b?: IMatcher<B>, c?: IMatcher<C>, d?: IMatcher<D>, e?: IMatcher<E>,
   f?: IMatcher<F>, g?: IMatcher<G>, h?: IMatcher<H>, i?: IMatcher<I>, j?: IMatcher<J>,
   k?: IMatcher<K>, l?: IMatcher<L>, n?: IMatcher<N>, m?: IMatcher<M>, o?: IMatcher<O>,
-  ): IMatcher<A & B & C & D & E & F & G & H & I & J & K & L & N & M & O>;
+): IMatcher<A & B & C & D & E & F & G & H & I & J & K & L & N & M & O>;
 export function url(...matchers: IMatcher[]): IMatcher<any> {
   return {
     build(value: object, appendSlash?: boolean) {
@@ -97,3 +97,42 @@ export function num<K extends string = string>(name: K): IMatcher<{[key in K]: n
     },
   };
 }
+
+export interface IBuilder<T> extends IMatcher<T> {
+  raw(value: string): IBuilder<T>;
+  str<K extends string = string>(name: K): IBuilder<T & {[key in K]: string}>;
+  num<K extends string = string>(name: K): IBuilder<T & {[key in K]: number}>;
+}
+
+class Builder<T = object> implements IBuilder<T>, IMatcher<T> {
+  protected readonly url: IMatcher<T>;
+  protected readonly matchers: IMatcher[];
+
+  constructor(matchers: IMatcher[] = []) {
+    this.matchers = matchers;
+    this.url = (url as (...matchers: IMatcher[]) => IMatcher<T>)(...matchers);
+  }
+
+  public build(value: T, appendSlash?: boolean | undefined): string {
+    return this.url.build(value, appendSlash);
+  }
+
+  public match(chunk: string): T | undefined {
+    return this.url.match(chunk);
+  }
+
+  public raw(value: string): Builder<T> {
+    return new Builder<T>([...this.matchers, raw(value)]);
+  }
+
+  public str<K extends string = string>(name: K): Builder<T & {[key in K]: string}> {
+    return new Builder<T & {[key in K]: string }>([...this.matchers, str(name)]);
+  }
+
+  public num<K extends string = string>(name: K): Builder<T & {[key in K]: number}> {
+    return new Builder<T & {[key in K]: number}>([...this.matchers, num(name)]);
+  }
+
+}
+
+export const builder: IBuilder<object> = new Builder();

@@ -1,4 +1,4 @@
-import { num, raw, str, url } from "./index";
+import { builder, num, raw, str, url } from "./index";
 
 describe("match", () => {
   it("raw", () => {
@@ -21,6 +21,15 @@ describe("match", () => {
 
   it("url", () => {
     const pattern = url(raw("foo"), str("bar"), num("spam"));
+    expect(pattern.match("/")).toBeUndefined();
+    expect(pattern.match("/foo")).toBeUndefined();
+    expect(pattern.match("/foo/bar")).toBeUndefined();
+    expect(pattern.match("/foo/bar/spam")).toBeUndefined();
+    expect(pattern.match("/foo/bar/1")).toEqual({ bar: "bar", spam: 1 });
+  });
+
+  it("builder", () => {
+    const pattern = builder.raw("foo").str("bar").num("spam");
     expect(pattern.match("/")).toBeUndefined();
     expect(pattern.match("/foo")).toBeUndefined();
     expect(pattern.match("/foo/bar")).toBeUndefined();
@@ -61,6 +70,12 @@ describe("build", () => {
 
   it("url", () => {
     const pattern = url(raw("foo"), str("bar"), num("spam"));
+    expect(pattern.build({ bar: "bar", spam: 123 })).toBe("/foo/bar/123/");
+    expect(pattern.build({ bar: "bar", spam: 123 }, false)).toBe("/foo/bar/123");
+  });
+
+  it("builder", () => {
+    const pattern = builder.raw("foo").str("bar").num("spam");
     expect(pattern.build({ bar: "bar", spam: 123 })).toBe("/foo/bar/123/");
     expect(pattern.build({ bar: "bar", spam: 123 }, false)).toBe("/foo/bar/123");
   });
